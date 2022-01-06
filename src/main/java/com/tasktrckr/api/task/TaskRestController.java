@@ -1,5 +1,7 @@
 package com.tasktrckr.api.task;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,5 +23,10 @@ public class TaskRestController {
 	@GetMapping(path = "/{taskId}", produces = "application/json")
 	public @ResponseBody TaskResponseDto getTask(@PathVariable int taskId) {
 		return taskService.getTask(taskId);
+	}
+	
+	@GetMapping(produces = "application/json")
+	public @ResponseBody List<TaskResponseDto> getTasks() {
+		return taskService.getTasks();
 	}
 }
