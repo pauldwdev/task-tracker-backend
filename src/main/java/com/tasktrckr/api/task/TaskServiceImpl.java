@@ -7,7 +7,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.tasktrckr.api.dto.task.TaskRequestDto;
 import com.tasktrckr.api.dto.task.TaskResponseDto;
+import com.tasktrckr.api.jpa.repositories.ProjectRepository;
 import com.tasktrckr.api.jpa.repositories.TaskRepository;
 import com.tasktrckr.api.mapper.TaskMapper;
 import com.tasttrckr.api.jpa.entities.TaskEntity;
@@ -17,6 +19,9 @@ public class TaskServiceImpl implements TaskService {
 
 	@Autowired
 	private TaskRepository taskRepository;
+
+	@Autowired
+	private ProjectRepository projectRepository;
 
 	@Autowired
 	private TaskMapper taskMapper;
@@ -35,6 +40,20 @@ public class TaskServiceImpl implements TaskService {
 	@Override
 	public List<TaskResponseDto> getTasks() {
 		return taskMapper.toTaskResponseDtoList(taskRepository.findAll());
+	}
+
+	@Override
+	public TaskResponseDto createTask(TaskRequestDto taskRequestDto) {
+		// check if task is present already
+		if (taskRepository.existsById(taskRequestDto.getTaskId())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot create new task with existing id.");
+		}
+		// check if project doesn't exit
+		if (!projectRepository.existsById(taskRequestDto.getProjectId())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+					"Cannot create new task with non existing project.");
+		}
+		return taskMapper.toTaskResponseDto(taskRepository.saveAndFlush(taskMapper.toTaskEntity(taskRequestDto)));
 	}
 
 }
