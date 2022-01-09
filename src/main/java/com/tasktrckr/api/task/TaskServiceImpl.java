@@ -44,11 +44,9 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public TaskResponseDto createTask(TaskRequestDto taskRequestDto) {
-		// check if task is present already
 		if (taskRepository.existsById(taskRequestDto.getTaskId())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot create new task with existing id.");
 		}
-		// check if project doesn't exit
 		if (!projectRepository.existsById(taskRequestDto.getProjectId())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 					"Cannot create new task with non existing project.");
@@ -58,7 +56,6 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public TaskResponseDto updateTask(TaskRequestDto taskRequestDto) {
-		// check if task is not present
 		if (!taskRepository.existsById(taskRequestDto.getTaskId())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
 					"Cannot update task. Task with provided ID does not exist.");
