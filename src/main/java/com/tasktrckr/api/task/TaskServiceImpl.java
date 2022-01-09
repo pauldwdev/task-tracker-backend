@@ -56,4 +56,14 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.toTaskResponseDto(taskRepository.saveAndFlush(taskMapper.toTaskEntity(taskRequestDto)));
 	}
 
+	@Override
+	public TaskResponseDto updateTask(TaskRequestDto taskRequestDto) {
+		// check if task is not present
+		if (!taskRepository.existsById(taskRequestDto.getTaskId())) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+					"Cannot update task. Task with provided ID does not exist.");
+		}
+		return taskMapper.toTaskResponseDto(taskRepository.saveAndFlush(taskMapper.toTaskEntity(taskRequestDto)));
+	}
+
 }
