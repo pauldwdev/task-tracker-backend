@@ -38,4 +38,8 @@ public class TaskRestController {
 		return taskService.createTask(taskRequestDto);
 	}
 	
+	public @ResponseBody TaskResponseDto updateTask(@RequestBody TaskRequestDto taskRequestDto) {
+		return taskService.updateTask(taskRequestDto);
+	}
+	
 }

@@ -11,4 +11,6 @@ public interface TaskService {
 	public List<TaskResponseDto> getTasks();
 
 	public TaskResponseDto createTask(TaskRequestDto taskRequestDto);
+
+	public TaskResponseDto updateTask(TaskRequestDto taskRequestDto);
 }
