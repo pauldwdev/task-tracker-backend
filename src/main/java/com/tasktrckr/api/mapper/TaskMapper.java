@@ -11,10 +11,12 @@ import com.tasttrckr.api.jpa.entities.TaskEntity;
 
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
+
+	@Mapping(source = "projectEntity.projectId", target = "projectId")
 	public TaskResponseDto toTaskResponseDto(TaskEntity taskEntity);
 
 	public List<TaskResponseDto> toTaskResponseDtoList(List<TaskEntity> taskEntity);
-	
+
 	@Mapping(source = "projectId", target = "projectEntity.projectId")
 	public TaskEntity toTaskEntity(TaskRequestDto taskRequestDto);
 }

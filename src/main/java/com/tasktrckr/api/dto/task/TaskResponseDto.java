@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TaskResponseDto {
 	private Integer taskId;
+	private Integer projectId;
 	private String taskName;
 	private String taskDetails;
 	private Timestamp dateCreated;
