@@ -53,9 +53,9 @@ public class TaskServiceTest {
 		// mock setup
 		when(taskRepository.findById(Mockito.anyInt())).thenReturn(Optional.of(taskEntity));
 		when(taskMapper.toTaskResponseDto(Mockito.any(TaskEntity.class))).thenReturn(response);
-		//call
+		// call
 		TaskResponseDto taskReturned = taskService.getTask(taskId);
-		//validation
+		// validation
 		verify(taskRepository, times(1)).findById(taskId);
 		verify(taskMapper, times(1)).toTaskResponseDto(taskEntity);
 		Assertions.assertEquals(taskReturned.getTaskId(), taskId);
@@ -108,6 +108,64 @@ public class TaskServiceTest {
 		verify(taskMapper, times(1)).toTaskResponseDto(e1);
 	}
 
+	@Test
+	public void createTaskResponseStatusException1Test() {
+		TaskEntity e1 = this.createTaskEntity();
+		int taskId = e1.getTaskId();
+		int projectId = e1.getProjectEntity().getProjectId();
+		TaskRequestDto request = new TaskRequestDto(taskId, null, null, null, null, null, projectId);
+		when(taskRepository.existsById(taskId)).thenReturn(true);
+		Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+			TaskResponseDto responseToTest = taskService.createTask(request);
+		});
+		Assertions.assertEquals("400 BAD_REQUEST \"Cannot create new task with existing id.\"", exception.getMessage());
+	}
+	
+	@Test
+	public void createTaskResponseStatusException2Test() {
+		TaskEntity e1 = this.createTaskEntity();
+		int taskId = e1.getTaskId();
+		int projectId = e1.getProjectEntity().getProjectId();
+		TaskRequestDto request = new TaskRequestDto(taskId, null, null, null, null, null, projectId);
+		when(taskRepository.existsById(taskId)).thenReturn(false);
+		when(projectRepository.existsById(projectId)).thenReturn(false);
+		Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+			TaskResponseDto responseToTest = taskService.createTask(request);
+		});
+		Assertions.assertEquals("400 BAD_REQUEST \"Cannot create new task with non existing project.\"", exception.getMessage());
+	}
+	
+	@Test
+	public void updateTaskTest() {
+		TaskEntity e1 = this.createTaskEntity();
+		int taskId = e1.getTaskId();
+		int projectId = e1.getProjectEntity().getProjectId();
+		TaskRequestDto request = new TaskRequestDto(taskId, null, null, null, null, null, projectId);
+		TaskResponseDto response = new TaskResponseDto(taskId, projectId, null, null, null, null, null);
+		when(taskRepository.existsById(taskId)).thenReturn(true);
+		when(taskRepository.saveAndFlush(e1)).thenReturn(e1);
+		when(taskMapper.toTaskEntity(Mockito.any(TaskRequestDto.class))).thenReturn(e1);
+		when(taskMapper.toTaskResponseDto(Mockito.any(TaskEntity.class))).thenReturn(response);
+		TaskResponseDto responseToTest = taskService.updateTask(request);
+		Assertions.assertEquals(response, responseToTest);
+		verify(taskRepository, times(1)).existsById(taskId);
+		verify(taskRepository, times(1)).saveAndFlush(e1);
+		verify(taskMapper, times(1)).toTaskEntity(request);
+		verify(taskMapper, times(1)).toTaskResponseDto(e1);		
+	}
+	
+	@Test
+	public void updateTaskResponseStatusException1Test() {
+		TaskEntity e1 = this.createTaskEntity();
+		int taskId = e1.getTaskId();
+		int projectId = e1.getProjectEntity().getProjectId();
+		TaskRequestDto request = new TaskRequestDto(taskId, null, null, null, null, null, projectId);
+		when(taskRepository.existsById(taskId)).thenReturn(false);
+		Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+			TaskResponseDto responseToTest = taskService.updateTask(request);
+		});
+		Assertions.assertEquals("400 BAD_REQUEST \"Cannot update task. Task with provided ID does not exist.\"", exception.getMessage());
+	}
 
 	private TaskEntity createTaskEntity() {
 		TaskEntity e1 = new TaskEntity();
