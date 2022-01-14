@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
 @ComponentScan("com.tasktrckr.api.*")
-@EntityScan("com.tasttrckr.api.jpa.entities")
+@EntityScan("com.tasktrckr.api.jpa.entities")
 @EnableJpaRepositories("com.tasktrckr.api.jpa.repositories")
 public class TaskTrackerAPI {
 	public static void main(String[] args) {

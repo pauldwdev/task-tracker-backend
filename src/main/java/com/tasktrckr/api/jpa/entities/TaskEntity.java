@@ -1,4 +1,4 @@
-package com.tasttrckr.api.jpa.entities;
+package com.tasktrckr.api.jpa.entities;
 
 import java.sql.Timestamp;
 

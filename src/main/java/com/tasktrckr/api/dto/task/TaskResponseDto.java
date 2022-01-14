@@ -7,7 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import com.tasttrckr.api.jpa.entities.ProjectEntity;
+import com.tasktrckr.api.jpa.entities.ProjectEntity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

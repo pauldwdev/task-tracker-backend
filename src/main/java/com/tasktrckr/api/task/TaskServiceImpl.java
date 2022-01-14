@@ -9,10 +9,10 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.tasktrckr.api.dto.task.TaskRequestDto;
 import com.tasktrckr.api.dto.task.TaskResponseDto;
+import com.tasktrckr.api.jpa.entities.TaskEntity;
 import com.tasktrckr.api.jpa.repositories.ProjectRepository;
 import com.tasktrckr.api.jpa.repositories.TaskRepository;
 import com.tasktrckr.api.mapper.TaskMapper;
-import com.tasttrckr.api.jpa.entities.TaskEntity;
 
 @Service
 public class TaskServiceImpl implements TaskService {

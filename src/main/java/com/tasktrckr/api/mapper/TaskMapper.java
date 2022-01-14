@@ -7,7 +7,7 @@ import org.mapstruct.Mapping;
 
 import com.tasktrckr.api.dto.task.TaskRequestDto;
 import com.tasktrckr.api.dto.task.TaskResponseDto;
-import com.tasttrckr.api.jpa.entities.TaskEntity;
+import com.tasktrckr.api.jpa.entities.TaskEntity;
 
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
