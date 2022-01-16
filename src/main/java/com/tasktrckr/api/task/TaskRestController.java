@@ -3,9 +3,11 @@ package com.tasktrckr.api.task;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -47,17 +49,27 @@ public class TaskRestController {
 		return taskService.getTasks();
 	}
 
-	@PostMapping(produces = "application/json")
+	@PutMapping(produces = "application/json")
 	@Operation(summary = "Update a task")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Updated and return task", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponseDto.class)) }) })
+	public @ResponseBody TaskResponseDto updateTask(@RequestBody TaskRequestDto taskRequestDto) {
+		return taskService.updateTask(taskRequestDto);
+	}
 
+	@PostMapping(produces = "application/json")
+	@Operation(summary = "Create a task")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Create and return task", content = {
+			@Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponseDto.class)) }) })
 	public @ResponseBody TaskResponseDto createTask(@RequestBody TaskRequestDto taskRequestDto) {
 		return taskService.createTask(taskRequestDto);
 	}
 
-	public @ResponseBody TaskResponseDto updateTask(@RequestBody TaskRequestDto taskRequestDto) {
-		return taskService.updateTask(taskRequestDto);
+	@DeleteMapping(path = "/{taskId}", produces = "application/json")
+	@Operation(summary = "Delete a task")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Delete task") })
+	public void deleteTask(@PathVariable int taskId) {
+		taskService.deleteTask(taskId);
 	}
 
 }

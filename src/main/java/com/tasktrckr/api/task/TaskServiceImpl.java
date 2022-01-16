@@ -63,4 +63,13 @@ public class TaskServiceImpl implements TaskService {
 		return taskMapper.toTaskResponseDto(taskRepository.saveAndFlush(taskMapper.toTaskEntity(taskRequestDto)));
 	}
 
+	@Override
+	public void deleteTask(Integer taskId) {
+		if (!taskRepository.existsById(taskId)) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+					"Cannot delete task. Task with provided ID does not exist.");
+		}
+		taskRepository.deleteById(taskId);
+	}
+
 }
