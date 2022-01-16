@@ -13,4 +13,6 @@ public interface TaskService {
 	public TaskResponseDto createTask(TaskRequestDto taskRequestDto);
 
 	public TaskResponseDto updateTask(TaskRequestDto taskRequestDto);
+
+	void deleteTask(Integer taskId);
 }
