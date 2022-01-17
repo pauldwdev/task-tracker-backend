@@ -1,4 +1,4 @@
-package com.tasktrckr.api.test.service;
+package com.tasktrckr.api.task.test.service;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
