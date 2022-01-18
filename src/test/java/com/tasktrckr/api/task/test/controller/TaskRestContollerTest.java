@@ -1,15 +1,23 @@
 package com.tasktrckr.api.task.test.controller;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.aspectj.lang.annotation.Before;
+import org.assertj.core.util.Arrays;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -48,7 +56,7 @@ public class TaskRestContollerTest {
 	}
 
 	@Test
-	public void validateCartonTest() throws Exception {
+	public void createTaskTest() throws Exception {
 
 		TaskRequestDto request = new TaskRequestDto();
 		request.setTaskId(1);
@@ -60,9 +68,80 @@ public class TaskRestContollerTest {
 
 		mvc.perform(post("/api/v1/tasks").contentType(MediaType.APPLICATION_JSON).content(json)
 				.characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
-				.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-				.andExpect(jsonPath("$.taskId", is(1)));
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.taskId", is(1)));
 		verify(taskService, times(1)).createTask(request);
 	}
 
+	@Test
+	public void updateTaskTest() throws Exception {
+
+		TaskRequestDto request = new TaskRequestDto();
+		request.setTaskId(1);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = objectMapper.writeValueAsString(request);
+
+		when(taskService.updateTask(request)).thenReturn(new TaskResponseDto(1, null, null, null, null, null, null));
+
+		mvc.perform(put("/api/v1/tasks").contentType(MediaType.APPLICATION_JSON).content(json)
+				.characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.taskId", is(1)));
+		verify(taskService, times(1)).updateTask(request);
+	}
+
+	@Test
+	public void deleteTaskTest() throws Exception {
+
+		TaskRequestDto request = new TaskRequestDto();
+		request.setTaskId(1);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = objectMapper.writeValueAsString(request);
+
+		doNothing().when(taskService).deleteTask(request.getTaskId());
+
+		mvc.perform(delete("/api/v1/tasks" + "/" + request.getTaskId()).contentType(MediaType.APPLICATION_JSON)
+				.content(json).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk());
+		verify(taskService, times(1)).deleteTask(request.getTaskId());
+	}
+
+	@Test
+	public void getTaskTest() throws Exception {
+
+		TaskRequestDto request = new TaskRequestDto();
+		request.setTaskId(1);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = objectMapper.writeValueAsString(request);
+
+		when(taskService.getTask(request.getTaskId()))
+				.thenReturn(new TaskResponseDto(1, null, null, null, null, null, null));
+
+		mvc.perform(get("/api/v1/tasks" + "/" + request.getTaskId()).contentType(MediaType.APPLICATION_JSON)
+				.content(json).characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$.taskId", is(1)));
+		verify(taskService, times(1)).getTask(request.getTaskId());
+	}
+
+	@Test
+	public void getTasksTest() throws Exception {
+
+		TaskRequestDto request = new TaskRequestDto();
+		request.setTaskId(1);
+
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = objectMapper.writeValueAsString(request);
+
+		List<TaskResponseDto> returnList = new ArrayList<>();
+		returnList.add(new TaskResponseDto(1, null, null, null, null, null, null));
+		returnList.add(new TaskResponseDto(2, null, null, null, null, null, null));
+
+		when(taskService.getTasks()).thenReturn(returnList);
+
+		mvc.perform(get("/api/v1/tasks").contentType(MediaType.APPLICATION_JSON).content(json)
+				.characterEncoding("utf-8").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+				.andExpect(content().contentType(MediaType.APPLICATION_JSON)).andExpect(jsonPath("$[0].taskId", is(1)));
+		verify(taskService, times(1)).getTasks();
+	}
 }
