@@ -13,6 +13,10 @@
 	</parent>
 	<properties>
 		<java.version>11</java.version>
+		<mapstruct.version>1.4.2.Final</mapstruct.version>
+		<org.projectlombok.version>1.18.20</org.projectlombok.version>
+		<commons.lang3.version>3.10</commons.lang3.version>
+		<hibernate.core.version>5.4.15.Final</hibernate.core.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -52,12 +56,11 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<optional>true</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.mapstruct</groupId>
 			<artifactId>mapstruct</artifactId>
-			<version>1.4.2.Final</version>
+			<version>${mapstruct.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -87,12 +90,12 @@
 				<version>0.7.7.201606060606</version>
 				<configuration>
 					<excludes>
-						<exclude>**/dao/*</exclude>
-						<exclude>**/exception/*</exclude>
-						<exclude>**/constants/*</exclude>
-						<exclude>**/config/*</exclude>
-						<exclude>**/config/*</exclude>
-						<exclude>**/EphsCustService.class</exclude>
+						<exclude>**/configuration/*</exclude>
+						<exclude>**/dto/**</exclude>
+						<exclude>**/entities/*</exclude>
+						<exclude>**/repositories/*</exclude>
+						<exclude>**/mapper/*</exclude>
+						<exclude>**/TaskTrackerAPI.java</exclude>
 					</excludes>
 				</configuration>
 				<executions>
@@ -121,7 +124,7 @@
 										<limit>
 											<counter>LINE</counter>
 											<value>COVEREDRATIO</value>
-											<minimum>0.80</minimum>
+											<minimum>0.00</minimum>
 										</limit>
 									</limits>
 								</rule>
@@ -145,9 +148,20 @@
 					<target>1.8</target>
 					<annotationProcessorPaths>
 						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${org.projectlombok.version}</version>
+						</path>
+						<path>
 							<groupId>org.mapstruct</groupId>
 							<artifactId>mapstruct-processor</artifactId>
-							<version>1.4.2.Final</version>
+							<version>${mapstruct.version}</version>
+						</path>
+
+						<path>
+							<groupId>org.hibernate</groupId>
+							<artifactId>hibernate-jpamodelgen</artifactId>
+							<version>${hibernate.core.version}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
