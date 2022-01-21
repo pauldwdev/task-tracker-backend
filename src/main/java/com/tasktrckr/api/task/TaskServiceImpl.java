@@ -28,12 +28,10 @@ public class TaskServiceImpl implements TaskService {
 
 	@Override
 	public TaskResponseDto getTask(Integer taskId) {
-
 		TaskEntity task = taskRepository.findById(taskId).orElse(null);
 		if (task == null) {
 			throw new ResponseStatusException(HttpStatus.NOT_FOUND, "task not found");
 		}
-
 		return taskMapper.toTaskResponseDto(task);
 	}
 
