@@ -2,6 +2,7 @@ package com.tasktrckr.api.task;
 
 import java.util.List;
 
+import org.jboss.logging.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,11 +24,16 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
+@Slf4j
 @RequestMapping(path = "/api/${tasktracker.api.version.base:v1}/tasks")
 @Tag(name = "Tasks", description = "Endpoints for CRUD operations on tasks")
 public class TaskRestController {
+
+	private final static String MDC_CONTEXT = "contextName";
+	private final static String TASK_MDC = "tasks";
 
 	@Autowired
 	private TaskService taskService;
@@ -37,8 +43,10 @@ public class TaskRestController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponseDto.class)) }) })
 	@GetMapping(path = "/{taskId}", produces = "application/json")
 	public @ResponseBody TaskResponseDto getTask(@PathVariable int taskId) {
-		return taskService.getTask(taskId);
-
+		MDC.put(MDC_CONTEXT, TASK_MDC);
+		TaskResponseDto task = taskService.getTask(taskId);
+		MDC.remove(MDC_CONTEXT);
+		return task;
 	}
 
 	@Operation(summary = "Get all tasks")
@@ -46,7 +54,10 @@ public class TaskRestController {
 			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TaskResponseDto.class))) }) })
 	@GetMapping(produces = "application/json")
 	public @ResponseBody List<TaskResponseDto> getTasks() {
-		return taskService.getTasks();
+		MDC.put(MDC_CONTEXT, TASK_MDC);
+		List<TaskResponseDto> taskList = taskService.getTasks();
+		MDC.remove(MDC_CONTEXT);
+		return taskList;
 	}
 
 	@PutMapping(produces = "application/json")
@@ -54,7 +65,10 @@ public class TaskRestController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Updated and return task", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponseDto.class)) }) })
 	public @ResponseBody TaskResponseDto updateTask(@RequestBody TaskRequestDto taskRequestDto) {
-		return taskService.updateTask(taskRequestDto);
+		MDC.put(MDC_CONTEXT, TASK_MDC);
+		TaskResponseDto task = taskService.updateTask(taskRequestDto);
+		MDC.remove(MDC_CONTEXT);
+		return task;
 	}
 
 	@PostMapping(produces = "application/json")
@@ -62,14 +76,19 @@ public class TaskRestController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Create and return task", content = {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponseDto.class)) }) })
 	public @ResponseBody TaskResponseDto createTask(@RequestBody TaskRequestDto taskRequestDto) {
-		return taskService.createTask(taskRequestDto);
+		MDC.put(MDC_CONTEXT, TASK_MDC);
+		TaskResponseDto task = taskService.createTask(taskRequestDto);
+		MDC.remove(MDC_CONTEXT);
+		return task;
 	}
 
 	@DeleteMapping(path = "/{taskId}", produces = "application/json")
 	@Operation(summary = "Delete a task")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Delete task") })
 	public void deleteTask(@PathVariable int taskId) {
+		MDC.put(MDC_CONTEXT, TASK_MDC);
 		taskService.deleteTask(taskId);
+		MDC.remove(MDC_CONTEXT);
 	}
 
 }
