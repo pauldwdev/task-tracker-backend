@@ -44,7 +44,9 @@ public class TaskRestController {
 	@GetMapping(path = "/{taskId}", produces = "application/json")
 	public @ResponseBody TaskResponseDto getTask(@PathVariable int taskId) {
 		MDC.put(MDC_CONTEXT, TASK_MDC);
+		log.info("--== START getTask");
 		TaskResponseDto task = taskService.getTask(taskId);
+		log.info("--== END getTask");
 		MDC.remove(MDC_CONTEXT);
 		return task;
 	}
@@ -55,7 +57,9 @@ public class TaskRestController {
 	@GetMapping(produces = "application/json")
 	public @ResponseBody List<TaskResponseDto> getTasks() {
 		MDC.put(MDC_CONTEXT, TASK_MDC);
+		log.info("--== START getTasks");
 		List<TaskResponseDto> taskList = taskService.getTasks();
+		log.info("--== END getTasks");
 		MDC.remove(MDC_CONTEXT);
 		return taskList;
 	}
@@ -66,7 +70,9 @@ public class TaskRestController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponseDto.class)) }) })
 	public @ResponseBody TaskResponseDto updateTask(@RequestBody TaskRequestDto taskRequestDto) {
 		MDC.put(MDC_CONTEXT, TASK_MDC);
+		log.info("--== START updateTask");
 		TaskResponseDto task = taskService.updateTask(taskRequestDto);
+		log.info("--== END updateTask");
 		MDC.remove(MDC_CONTEXT);
 		return task;
 	}
@@ -77,7 +83,9 @@ public class TaskRestController {
 			@Content(mediaType = "application/json", schema = @Schema(implementation = TaskResponseDto.class)) }) })
 	public @ResponseBody TaskResponseDto createTask(@RequestBody TaskRequestDto taskRequestDto) {
 		MDC.put(MDC_CONTEXT, TASK_MDC);
+		log.info("--== START createTask");
 		TaskResponseDto task = taskService.createTask(taskRequestDto);
+		log.info("--== END createTask");
 		MDC.remove(MDC_CONTEXT);
 		return task;
 	}
@@ -87,7 +95,9 @@ public class TaskRestController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Delete task") })
 	public void deleteTask(@PathVariable int taskId) {
 		MDC.put(MDC_CONTEXT, TASK_MDC);
+		log.info("--== START deleteTask");
 		taskService.deleteTask(taskId);
+		log.info("--== END deleteTask");
 		MDC.remove(MDC_CONTEXT);
 	}
 
