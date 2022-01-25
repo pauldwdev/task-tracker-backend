@@ -1,5 +1,7 @@
 package com.tasktrckr.api.project;
 
+import java.util.List;
+
 import org.jboss.logging.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import com.tasktrckr.api.task.TaskRestController;
 import com.tasktrckr.api.task.TaskService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -44,5 +47,18 @@ public class ProjectRestController {
 		log.info("--== END getProject");
 		MDC.remove(MDC_CONTEXT);
 		return project;
+	}
+	
+	@Operation(summary = "Get all projects")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Found projects to return", content = {
+			@Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = ProjectResponseDto.class))) }) })
+	@GetMapping(produces = "application/json")
+	public @ResponseBody List<ProjectResponseDto> getProjects() {
+		MDC.put(MDC_CONTEXT, PROJECT_MDC);
+		log.info("--== START getProjects");
+		List<ProjectResponseDto> projectList = projectService.getProjects();
+		log.info("--== END getProjects");
+		MDC.remove(MDC_CONTEXT);
+		return projectList;
 	}
 }
