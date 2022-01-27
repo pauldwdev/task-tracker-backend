@@ -45,10 +45,6 @@ public class ProjectServiceImpl implements ProjectService {
 		if (projectRepository.existsById(projectRequestDto.getProjectId())) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot create new project with existing id.");
 		}
-		if (!projectRepository.existsById(projectRequestDto.getProjectId())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-					"Cannot create new project with non existing project.");
-		}
 		return projectMapper
 				.toProjectResponseDto(projectRepository.saveAndFlush(projectMapper.toProjectEntity(projectRequestDto)));
 	}
