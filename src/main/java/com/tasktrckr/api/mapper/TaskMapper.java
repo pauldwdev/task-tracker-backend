@@ -12,7 +12,7 @@ import com.tasktrckr.api.jpa.entities.TaskEntity;
 @Mapper(componentModel = "spring")
 public interface TaskMapper {
 
-	@Mapping(source = "projectEntity.projectId", target = "projectId")
+	@Mapping(source = "projectEntity.projectId", target = "project.projectId")
 	public TaskResponseDto toTaskResponseDto(TaskEntity taskEntity);
 
 	public List<TaskResponseDto> toTaskResponseDtoList(List<TaskEntity> taskEntity);

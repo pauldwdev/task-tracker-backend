@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import com.tasktrckr.api.dto.project.ProjectResponseDto;
 import com.tasktrckr.api.jpa.entities.ProjectEntity;
 
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class TaskResponseDto {
 	private Integer taskId;
-	private Integer projectId;
+	private ProjectResponseDto project;
 	private String taskName;
 	private String taskDetails;
 	private Timestamp dateCreated;
