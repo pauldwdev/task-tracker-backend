@@ -1,5 +1,6 @@
 package com.tasktrckr.api.task.test.service;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -7,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.tasktrckr.api.dto.task.TaskRequestDto;
@@ -120,7 +119,7 @@ public class TaskServiceTest {
 		});
 		Assertions.assertEquals("400 BAD_REQUEST \"Cannot create new task with existing id.\"", exception.getMessage());
 	}
-	
+
 	@Test
 	public void createTaskResponseStatusException2Test() {
 		TaskEntity e1 = this.createTaskEntity();
@@ -132,9 +131,10 @@ public class TaskServiceTest {
 		Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
 			TaskResponseDto responseToTest = taskService.createTask(request);
 		});
-		Assertions.assertEquals("400 BAD_REQUEST \"Cannot create new task with non existing project.\"", exception.getMessage());
+		Assertions.assertEquals("400 BAD_REQUEST \"Cannot create new task with non existing project.\"",
+				exception.getMessage());
 	}
-	
+
 	@Test
 	public void updateTaskTest() {
 		TaskEntity e1 = this.createTaskEntity();
@@ -151,9 +151,9 @@ public class TaskServiceTest {
 		verify(taskRepository, times(1)).existsById(taskId);
 		verify(taskRepository, times(1)).saveAndFlush(e1);
 		verify(taskMapper, times(1)).toTaskEntity(request);
-		verify(taskMapper, times(1)).toTaskResponseDto(e1);		
+		verify(taskMapper, times(1)).toTaskResponseDto(e1);
 	}
-	
+
 	@Test
 	public void updateTaskResponseStatusException1Test() {
 		TaskEntity e1 = this.createTaskEntity();
@@ -164,7 +164,31 @@ public class TaskServiceTest {
 		Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
 			TaskResponseDto responseToTest = taskService.updateTask(request);
 		});
-		Assertions.assertEquals("400 BAD_REQUEST \"Cannot update task. Task with provided ID does not exist.\"", exception.getMessage());
+		Assertions.assertEquals("400 BAD_REQUEST \"Cannot update task. Task with provided ID does not exist.\"",
+				exception.getMessage());
+	}
+
+	@Test
+	public void deleteTaskTest() {
+		TaskEntity e1 = this.createTaskEntity();
+		int taskId = e1.getTaskId();
+		when(taskRepository.existsById(taskId)).thenReturn(true);
+		doNothing().when(taskRepository).deleteById(taskId);
+		taskService.deleteTask(taskId);
+		verify(taskRepository, times(1)).existsById(taskId);
+		verify(taskRepository, times(1)).deleteById(taskId);
+	}
+
+	@Test
+	public void deleteTaskResponseStatusException1Test() {
+		TaskEntity e1 = this.createTaskEntity();
+		int taskId = e1.getTaskId();
+		when(taskRepository.existsById(taskId)).thenReturn(false);
+		Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+			taskService.deleteTask(taskId);
+		});
+		Assertions.assertEquals("400 BAD_REQUEST \"Cannot delete task. Task with provided ID does not exist.\"",
+				exception.getMessage());
 	}
 
 	private TaskEntity createTaskEntity() {
