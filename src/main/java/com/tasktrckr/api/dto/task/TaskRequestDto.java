@@ -11,10 +11,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TaskRequestDto {
 	private Integer taskId;
+	private Integer projectId;
 	private String taskName;
 	private String taskDetails;
 	private Timestamp dateCreated;
 	private Timestamp dateCompleted;
 	private Timestamp dateStarted;
-	private Integer projectId;
+	
 }
