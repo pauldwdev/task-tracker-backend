@@ -1,5 +1,6 @@
 package com.tasktrckr.api.project.test.service;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -7,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import org.apache.commons.lang3.RandomUtils;
 import org.junit.jupiter.api.Assertions;
@@ -17,13 +17,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.tasktrckr.api.dto.project.ProjectRequestDto;
 import com.tasktrckr.api.dto.project.ProjectResponseDto;
 import com.tasktrckr.api.jpa.entities.ClientEntity;
 import com.tasktrckr.api.jpa.entities.ProjectEntity;
+import com.tasktrckr.api.jpa.entities.TaskEntity;
 import com.tasktrckr.api.jpa.repositories.ProjectRepository;
 import com.tasktrckr.api.mapper.ProjectMapper;
 import com.tasktrckr.api.project.ProjectServiceImpl;
@@ -79,8 +79,6 @@ public class ProjectServiceTest {
 		Assertions.assertEquals(returned, projectResponseDtoList);
 	}
 
-
-
 	@Test
 	public void createProjectTest() {
 		// data setup
@@ -102,6 +100,74 @@ public class ProjectServiceTest {
 		verify(projectMapper, times(1)).toProjectEntity(request);
 		verify(projectMapper, times(1)).toProjectResponseDto(e1);
 	}
+
+	@Test
+	public void createProjectResponseStatusException1Test() {
+		ProjectEntity e1 = this.createProjectEntity();
+		int projectId = e1.getProjectId();
+		ProjectRequestDto request = new ProjectRequestDto(projectId, null, null, null, null, null, null);
+		when(projectRepository.existsById(projectId)).thenReturn(true);
+		Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+			ProjectResponseDto responseToTest = projectService.createProject(request);
+		});
+		Assertions.assertEquals("400 BAD_REQUEST \"Cannot create new project with existing id.\"",
+				exception.getMessage());
+	}
+
+	@Test
+	public void updateProjectTest() {
+		ProjectEntity e1 = this.createProjectEntity();
+		int projectId = e1.getProjectId();
+		ProjectRequestDto request = new ProjectRequestDto(projectId, null, null, null, null, null, null);
+		ProjectResponseDto response = new ProjectResponseDto(projectId, null, null, null, null, null, null);
+		when(projectRepository.existsById(projectId)).thenReturn(true);
+		when(projectRepository.saveAndFlush(e1)).thenReturn(e1);
+		when(projectMapper.toProjectEntity(Mockito.any(ProjectRequestDto.class))).thenReturn(e1);
+		when(projectMapper.toProjectResponseDto(Mockito.any(ProjectEntity.class))).thenReturn(response);
+		ProjectResponseDto responseToTest = projectService.updateProject(request);
+		Assertions.assertEquals(response, responseToTest);
+		verify(projectRepository, times(1)).existsById(projectId);
+		verify(projectRepository, times(1)).saveAndFlush(e1);
+		verify(projectMapper, times(1)).toProjectEntity(request);
+		verify(projectMapper, times(1)).toProjectResponseDto(e1);
+	}
+
+	@Test
+	public void updateProjectResponseStatusException1Test() {
+		ProjectEntity e1 = this.createProjectEntity();
+		int projectId = e1.getProjectId();
+		ProjectRequestDto request = new ProjectRequestDto(projectId, null, null, null, null, null, null);
+		when(projectRepository.existsById(projectId)).thenReturn(false);
+		Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+			ProjectResponseDto responseToTest = projectService.updateProject(request);
+		});
+		Assertions.assertEquals("400 BAD_REQUEST \"Cannot update project. Project with provided ID does not exist.\"",
+				exception.getMessage());
+	}
+
+	@Test
+	public void deleteProjectTest() {
+		ProjectEntity e1 = this.createProjectEntity();
+		int projectId = e1.getProjectId();
+		when(projectRepository.existsById(projectId)).thenReturn(true);
+		doNothing().when(projectRepository).deleteById(projectId);
+		projectService.deleteProject(projectId);
+		verify(projectRepository, times(1)).existsById(projectId);
+		verify(projectRepository, times(1)).deleteById(projectId);
+	}
+
+	@Test
+	public void deleteProjectResponseStatusException1Test() {
+		ProjectEntity e1 = this.createProjectEntity();
+		int projectId = e1.getProjectId();
+		when(projectRepository.existsById(projectId)).thenReturn(false);
+		Exception exception = Assertions.assertThrows(ResponseStatusException.class, () -> {
+			projectService.deleteProject(projectId);
+		});
+		Assertions.assertEquals("400 BAD_REQUEST \"Cannot delete project. Project with provided ID does not exist.\"",
+				exception.getMessage());
+	}
+
 	private ProjectEntity createProjectEntity() {
 		ProjectEntity p1 = new ProjectEntity();
 		p1.setProjectId(RandomUtils.nextInt());
