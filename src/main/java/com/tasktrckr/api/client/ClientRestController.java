@@ -3,6 +3,7 @@ package com.tasktrckr.api.client;
 import java.util.List;
 
 import org.jboss.logging.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,6 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 @Tag(name = "Clients", description = "Endpoints for CRUD operations on clients")
 public class ClientRestController {
 
+	@Autowired
+	private ClientService clientService;
+
 	private final static String MDC_CONTEXT = "contextName";
 	private final static String PROJECT_MDC = "clients";
 
@@ -42,7 +46,7 @@ public class ClientRestController {
 	public @ResponseBody ClientResponseDto getClient(@PathVariable String clientId) {
 		MDC.put(MDC_CONTEXT, PROJECT_MDC);
 		log.info("--== START getClient");
-		ClientResponseDto client = null;
+		ClientResponseDto client = clientService.getClient(clientId);
 		log.info("--== END getClient");
 		MDC.remove(MDC_CONTEXT);
 		return client;
