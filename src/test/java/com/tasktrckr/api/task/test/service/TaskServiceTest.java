@@ -88,7 +88,7 @@ public class TaskServiceTest {
 		TaskEntity e1 = this.createTaskEntity();
 		int taskId = e1.getTaskId();
 		int projectId = e1.getProjectEntity().getProjectId();
-		TaskRequestDto request = new TaskRequestDto(taskId, null, null, null, null, null, projectId);
+		TaskRequestDto request = new TaskRequestDto(taskId, projectId, null, null, null, null, null);
 		TaskResponseDto response = new TaskResponseDto(taskId, projectId, null, null, null, null, null);
 		// mock setup
 		when(taskRepository.existsById(taskId)).thenReturn(false);
